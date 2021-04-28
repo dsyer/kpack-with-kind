@@ -1,0 +1,19 @@
+apiVersion: kpack.io/v1alpha1
+kind: Builder
+metadata:
+  name: my-builder
+  namespace: default
+spec:
+  serviceAccount: tutorial-service-account
+  tag: registry.local:5000/apps/petclinic
+  stack:
+    name: base
+    kind: ClusterStack
+  store:
+    name: default
+    kind: ClusterStore
+  order:
+  - group:
+    - id: paketo-buildpacks/java
+  - group:
+    - id: paketo-buildpacks/nodejs

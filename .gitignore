@@ -1,0 +1,15 @@
+*~
+.#*
+*#
+target
+bin
+.vagrant
+log/
+/data
+.DS_Store
+.github/workflows/fats
+containerd*
+.vscode/
+.attach_pid*
+dive.log
+/gce
