@@ -1,12 +1,28 @@
 # Kpack with Local Registry and Kind
 
-Kind setup includes configuration for insecure registry:
+## Kind setup
+
+Here's a script that includes configuration for insecure registry. The script also starts the registry in docker and exposes it on port 5000 locally. That works for building on the host and pushing and deploying in cluster:
 
 ```
 $ ./kind-setup.sh
 ```
 
-includes `containerdConfigPatches` for `registry.local` as a hostname for an insecure registry. Also starts the registry in docker and exposes it on port 5000 locally. That works for building on the host and pushing and deploying in cluster.
+The `kind` config contains `containerdConfigPatches` for `registry.local` as a hostname for an insecure registry:
+
+```
+kind: Cluster 
+apiVersion: kind.x-k8s.io/v1alpha4
+containerdConfigPatches: 
+- |-
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."${reg_name}:${reg_port}"]
+    endpoint = ["http://${reg_name}:${reg_port}"]
+...
+```
+
+So kind can pull images from `registry.local`. The hostname resolution is handled by docker and it knows that it's insecure because of containerd.
+
+## Kpack
 
 The host `registry.local` is a special name that is treated as insecure by `kpack` (or rather the library that it uses). You need to be able to resolve the host from the `kpack` worker pods. So we can do that by hacking `/etc/hosts`:
 
